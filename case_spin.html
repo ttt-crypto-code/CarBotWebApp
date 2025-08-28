@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Case Spinner</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .case-scroll {
+      width: 80%;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+      height: 100px;
+    }
+    .arrow {
+      position: absolute;
+      left: 40%;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      color: #ffd700;
+      z-index: 10;
+    }
+    .items {
+      display: flex;
+      animation: scroll 10s linear forwards;
+      white-space: nowrap;
+      position: relative;
+    }
+    .item {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 10px;
+      background-color: #333;
+      border-radius: 5px;
+      min-width: 80px;
+      height: 80px;
+      line-height: 80px;
+      font-size: 16px;
+      color: #ffd700;
+    }
+    .buttons {
+      margin: 20px 0;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .button:hover {
+      background-color: #45a049;
+    }
+    .showcase {
+      width: 80%;
+      margin: 20px auto;
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .showcase-item {
+      padding: 10px;
+      background-color: #222;
+      margin: 5px 0;
+      border-radius: 3px;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      80% { transform: translateX(-200%); } /* Быстрое вращение */
+      90% { transform: translateX(-220%); transition: transform 2s ease-out; } /* Замедление */
+      100% { transform: translateX(-230%); } /* Остановка на призе */
+    }
+  </style>
+</head>
+<body>
+  <h2 id="case-name">Выбери режим</h2>
+  <div class="case-scroll">
+    <div class="arrow">v</div>
+    <div class="items" id="item-list">
+      <!-- Предметы будут добавлены динамически -->
+    </div>
+  </div>
+  <div class="buttons">
+    <button class="button" onclick="spinCase(false)">Крутить кейс</button>
+    <button class="button" onclick="spinCase(true)">Крутить демо</button>
+  </div>
+  <div class="showcase" id="showcase">
+    <!-- Витрина будет заполнена динамически -->
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const caseName = urlParams.get('case');
+    const items = {
+      "garage": ["svechi", "tormoz disk", "val", "prujina"],
+      "sto": ["svechi", "tormoz disk", "val", "prujina"],
+      "detailing": ["svechi", "tormoz disk", "val", "prujina", "oka", "priora"],
+      "autosalon": ["oka", "priora"],
+      "number": ["nomber 2", "nomber3"],
+      "gold_box": ["svechi", "tormoz disk", "val", "prujina", "oka", "priora"]
+    };
+    const itemValues = {
+      "svechi": 20, "tormoz disk": 30, "val": 50, "prujina": 50,
+      "oka": 3105, "priora": 4200, "nomber 2": 40, "nomber3": 115
+    };
+
+    document.getElementById('case-name').textContent = `Кейс: ${caseName}`;
+    const itemList = document.getElementById('item-list');
+    const showcase = document.getElementById('showcase');
+
+    // Заполнение ленты предметами
+    items[caseName].forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.textContent = item;
+      div.style.backgroundImage = `url('file:///${IMAGE_DIR}/${item}.png')`;
+      div.style.backgroundSize = 'cover';
+      itemList.appendChild(div);
+    });
+
+    // Заполнение витрины
+    items[caseName].forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'showcase-item';
+      div.textContent = `${item} - ${itemValues[item]} Carcoins`;
+      showcase.appendChild(div);
+    });
+
+    function spinCase(demo) {
+      const itemsDiv = document.querySelector('.items');
+      itemsDiv.style.animation = 'none';
+      itemsDiv.offsetHeight; // Перезапуск анимации
+      itemsDiv.style.animation = 'scroll 10s linear forwards';
+      setTimeout(() => {
+        itemsDiv.style.transition = 'transform 2s ease-out';
+        const prizeIndex = Math.floor(Math.random() * items[caseName].length);
+        const prizeOffset = -prizeIndex * 100; // Смещение в процентах
+        itemsDiv.style.transform = `translateX(${prizeOffset}%)`;
+      }, 8000); // Замедление начинается на 8-й секунде (80%)
+    }
+  </script>
+</body>
+</html>
